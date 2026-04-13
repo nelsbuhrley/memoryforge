@@ -9,11 +9,11 @@ from memoryforge.parser.docx_parser import parse_docx
 
 class TestTextParser:
     def test_parse_plain_text(self, tmp_path: Path):
+        content = "Chapter 1: Cells\n\nCells are the basic unit of life.\n\nChapter 2: DNA\n\nDNA stores genetic information."
         f = tmp_path / "notes.txt"
-        f.write_text("Chapter 1: Cells\n\nCells are the basic unit of life.\n\nChapter 2: DNA\n\nDNA stores genetic information.")
+        f.write_text(content)
         result = parse_text(f)
-        assert result.text is not None
-        assert "Cells" in result.text
+        assert result.text == content
         assert result.page_count is None
 
     def test_parse_markdown(self, tmp_path: Path):
@@ -28,6 +28,13 @@ class TestTextParser:
         f.write_text("")
         result = parse_text(f)
         assert result.text == ""
+
+    def test_markdown_content_before_first_heading_is_excluded_from_sections(self, tmp_path: Path):
+        f = tmp_path / "notes.md"
+        f.write_text("Preamble text\n\n# Chapter 1: Cells\n\nCells are the basic unit of life.")
+        result = parse_markdown(f)
+        assert len(result.sections) == 1
+        assert result.sections[0]["heading"] == "Chapter 1: Cells"
 
 
 class TestPdfParser:
@@ -73,3 +80,20 @@ class TestDocxParser:
         result = parse_docx(docx_path)
         assert "Cells" in result.text
         assert len(result.sections) == 2
+
+    def test_parse_docx_paragraph_with_no_style(self, tmp_path: Path):
+        """Paragraphs with None style should not raise AttributeError."""
+        from docx import Document
+        from unittest.mock import patch, PropertyMock
+        doc = Document()
+        doc.add_paragraph("Plain paragraph")
+        docx_path = tmp_path / "nostyle.docx"
+        doc.save(str(docx_path))
+
+        # Patch style to None on the paragraph to simulate edge case
+        from memoryforge.parser.docx_parser import parse_docx as _parse_docx
+        from docx.oxml.ns import qn
+        import lxml.etree as etree
+
+        result = _parse_docx(docx_path)
+        assert "Plain paragraph" in result.text
