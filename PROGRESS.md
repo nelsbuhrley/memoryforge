@@ -18,13 +18,13 @@
   - `backend/memoryforge/db/` (schema.sql, connection.py, repository.py)
   - `backend/tests/test_db.py` — 22/22 tests passing
 
-- [ ] **Task 3: SM-2 Engine**
+- [x] **Task 3: SM-2 Engine** — commits `557b1c9`, `7548452`
   - `backend/memoryforge/sm2/` (engine.py with SM2State, sm2(), quality_from_grade())
-  - `backend/tests/test_sm2.py`
+  - `backend/tests/test_sm2.py` — 13/13 tests passing
 
-- [ ] **Task 4: Material Parsers**
+- [x] **Task 4: Material Parsers** — commits `e8a6cf7`, `96acfa3`, `6056c32`
   - `backend/memoryforge/parser/` (pdf_parser.py, docx_parser.py, text_parser.py)
-  - `backend/tests/test_parser.py`
+  - `backend/tests/test_parser.py` — 8/8 tests passing
 
 - [ ] **Task 5: Claude Service + 3-Layer Pattern**
   - `backend/memoryforge/claude_service/` (client.py, prompts.py, three_layer.py)
