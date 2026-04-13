@@ -32,7 +32,7 @@ class TestSM2Algorithm:
     def test_easiness_factor_never_below_minimum(self):
         state = SM2State(easiness_factor=1.3)
         new_state = sm2(quality=0, state=state)
-        assert new_state.easiness_factor >= 1.3
+        assert new_state.easiness_factor == 1.3
 
     def test_perfect_score_increases_ef(self):
         state = SM2State(easiness_factor=2.5)

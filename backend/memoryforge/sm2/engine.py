@@ -48,6 +48,7 @@ def sm2(quality: int, state: SM2State) -> SM2State:
         repetitions = 0
         interval = 1
 
+    # EF is always updated regardless of success/failure (per SM-2 spec)
     ef = ef + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02))
     ef = max(MIN_EASINESS_FACTOR, ef)
 
