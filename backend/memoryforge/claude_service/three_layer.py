@@ -50,7 +50,10 @@ def build_expanded_context(
 
         tags = ku.get("tags", "[]")
         if isinstance(tags, str):
-            tags = json.loads(tags)
+            try:
+                tags = json.loads(tags)
+            except json.JSONDecodeError:
+                tags = []
 
         parts.append(
             f"[KU#{ku_id}] {ku['concept']}\n"

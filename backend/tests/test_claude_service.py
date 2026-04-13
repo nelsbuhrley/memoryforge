@@ -4,9 +4,10 @@ These tests mock the Claude agent-sdk to test prompt construction
 and response handling without making real API calls.
 """
 
-from unittest.mock import AsyncMock, patch, MagicMock
+from unittest.mock import AsyncMock, patch
 import json
 
+from memoryforge.claude_service.client import query_claude_json
 from memoryforge.claude_service.prompts import (
     build_ku_extraction_prompt,
     build_quiz_prompt,
@@ -136,3 +137,28 @@ class TestThreeLayerPattern:
         expanded = build_expanded_context(kus, {1: reviews})
         assert "oxidative phosphorylation" in expanded
         assert "quality" in expanded.lower() or "review" in expanded.lower()
+
+
+class TestQueryClaudeJson:
+    async def test_parses_plain_json(self):
+        with patch("memoryforge.claude_service.client.query_claude", new=AsyncMock(return_value='{"key": "value"}')):
+            result = await query_claude_json("prompt")
+        assert result == {"key": "value"}
+
+    async def test_strips_fenced_code_block(self):
+        response = "```json\n{\"key\": \"value\"}\n```"
+        with patch("memoryforge.claude_service.client.query_claude", new=AsyncMock(return_value=response)):
+            result = await query_claude_json("prompt")
+        assert result == {"key": "value"}
+
+    async def test_strips_code_block_with_prose(self):
+        response = "Here is the result:\n```json\n{\"key\": \"value\"}\n```\nHope that helps."
+        with patch("memoryforge.claude_service.client.query_claude", new=AsyncMock(return_value=response)):
+            result = await query_claude_json("prompt")
+        assert result == {"key": "value"}
+
+    async def test_strips_unnamed_code_block(self):
+        response = "```\n{\"key\": \"value\"}\n```"
+        with patch("memoryforge.claude_service.client.query_claude", new=AsyncMock(return_value=response)):
+            result = await query_claude_json("prompt")
+        assert result == {"key": "value"}

@@ -6,6 +6,7 @@ sending/receiving and parsing responses.
 """
 
 import json
+import re
 from typing import Any
 
 
@@ -37,11 +38,10 @@ async def query_claude_json(prompt: str) -> dict[str, Any]:
     """Send a prompt and parse the JSON response."""
     raw = await query_claude(prompt)
 
-    # Extract JSON from response — Claude may wrap it in markdown code blocks
+    # Extract JSON — Claude may wrap it in a markdown code block or add prose
     text = raw.strip()
-    if text.startswith("```"):
-        lines = text.split("\n")
-        # Remove first and last lines (```json and ```)
-        text = "\n".join(lines[1:-1])
+    match = re.search(r"```(?:json)?\s*\n(.*?)\n```", text, re.DOTALL)
+    if match:
+        text = match.group(1).strip()
 
     return json.loads(text)
