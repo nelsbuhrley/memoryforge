@@ -18,7 +18,7 @@ MemoryForge is a full-stack AI-powered adaptive learning desktop application. Us
 - **Generation effect** — attempt answers before seeing them; struggle creates cognitive hooks
 - **Calibration** — expose illusions of knowing; show where students think they know but don't
 
-This is a **teaching app**, not a quiz app. Sessions are structured like a great tutor: ask before teaching, teach, practice, test, re-teach if needed.
+This is a **teaching app**, not just a quiz app. Sessions are structured like a great tutor: ask before teaching, teach, practice, test, re-teach if needed.
 
 ## Architecture
 
@@ -251,7 +251,7 @@ def sm2(quality: int, repetitions: int, easiness_factor: float, interval: int):
 - 1 — incorrect, vaguely remembered
 - 0 — complete blackout
 
-Cards are never deleted. Mastered cards get longer intervals (weeks, months, years) but always come back. Failed long-term cards reset and enter re-teach flow.
+Cards are never deleted. Mastered cards get longer intervals (weeks, months, years) but always come back. Failed long-term cards reset and enter re-teach flow in alignment with user requests.
 
 ## Context-Aware Scheduler
 
