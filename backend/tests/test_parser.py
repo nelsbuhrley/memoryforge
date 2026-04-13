@@ -81,19 +81,14 @@ class TestDocxParser:
         assert "Cells" in result.text
         assert len(result.sections) == 2
 
-    def test_parse_docx_paragraph_with_no_style(self, tmp_path: Path):
-        """Paragraphs with None style should not raise AttributeError."""
+    def test_parse_docx_plain_paragraph_not_in_sections(self, tmp_path: Path):
+        """Plain (non-heading) paragraphs appear in text but not in sections."""
         from docx import Document
-        from unittest.mock import patch, PropertyMock
         doc = Document()
         doc.add_paragraph("Plain paragraph")
-        docx_path = tmp_path / "nostyle.docx"
+        docx_path = tmp_path / "plain.docx"
         doc.save(str(docx_path))
 
-        # Patch style to None on the paragraph to simulate edge case
-        from memoryforge.parser.docx_parser import parse_docx as _parse_docx
-        from docx.oxml.ns import qn
-        import lxml.etree as etree
-
-        result = _parse_docx(docx_path)
+        result = parse_docx(docx_path)
         assert "Plain paragraph" in result.text
+        assert result.sections == []
