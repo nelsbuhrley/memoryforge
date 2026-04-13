@@ -26,9 +26,9 @@
   - `backend/memoryforge/parser/` (pdf_parser.py, docx_parser.py, text_parser.py)
   - `backend/tests/test_parser.py` — 8/8 tests passing
 
-- [ ] **Task 5: Claude Service + 3-Layer Pattern**
+- [x] **Task 5: Claude Service + 3-Layer Pattern** — commits `21c9ff8`, `9822af5`
   - `backend/memoryforge/claude_service/` (client.py, prompts.py, three_layer.py)
-  - `backend/tests/test_claude_service.py`
+  - `backend/tests/test_claude_service.py` — 15/15 tests passing
 
 - [ ] **Task 6: Question Type Registry**
   - `backend/memoryforge/session/question_registry.py`
