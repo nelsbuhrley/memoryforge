@@ -46,19 +46,19 @@
   - `backend/memoryforge/session/engine.py`
   - `backend/tests/test_session.py` — 7/7 tests passing
 
-- [ ] **Task 10: Streak Tracker**
+- [x] **Task 10: Streak Tracker** — commit `5ab3705`
   - `backend/memoryforge/streak/tracker.py`
-  - `backend/tests/test_streak.py`
+  - `backend/tests/test_streak.py` — 7/7 tests passing
 
-- [ ] **Task 11: Material Processor**
+- [x] **Task 11: Material Processor** — commit `987caab`
   - `backend/memoryforge/parser/material_processor.py`
-  - `backend/tests/test_material_processor.py`
+  - `backend/tests/test_material_processor.py` — 7/7 tests passing
 
-- [ ] **Task 12: FastAPI Server**
+- [x] **Task 12: FastAPI Server** — commit `318f2b3`
   - `backend/memoryforge/api/` (app.py + 6 route modules)
-  - `backend/tests/test_api.py`
+  - `backend/tests/test_api.py` — 12/12 tests passing
 
-- [ ] **Task 13: Full Test Suite Verification + Final Commit**
+- [x] **Task 13: Full Test Suite Verification + Final Commit** — 108/108 tests passing
 
 ## Context
 - Repo: `/Users/nelsbuhrley/ClaudeWorkspace/memoryforge`
