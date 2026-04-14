@@ -30,21 +30,21 @@
   - `backend/memoryforge/claude_service/` (client.py, prompts.py, three_layer.py)
   - `backend/tests/test_claude_service.py` — 15/15 tests passing
 
-- [ ] **Task 6: Question Type Registry**
+- [x] **Task 6: Question Type Registry** — commit `a8676dc`
   - `backend/memoryforge/session/question_registry.py`
-  - `backend/tests/test_question_registry.py`
+  - `backend/tests/test_question_registry.py` — 6/6 tests passing
 
-- [ ] **Task 7: Grader**
+- [x] **Task 7: Grader** — commit `33cf46c`
   - `backend/memoryforge/session/grader.py`
-  - `backend/tests/test_grader.py`
+  - `backend/tests/test_grader.py` — 5/5 tests passing
 
-- [ ] **Task 8: Context-Aware Scheduler**
+- [x] **Task 8: Context-Aware Scheduler** — commit `a313462`
   - `backend/memoryforge/scheduler/context_aware.py`
-  - `backend/tests/test_scheduler.py`
+  - `backend/tests/test_scheduler.py` — 6/6 tests passing
 
-- [ ] **Task 9: Session Engine**
+- [x] **Task 9: Session Engine** — commit `ae56637`
   - `backend/memoryforge/session/engine.py`
-  - `backend/tests/test_session.py`
+  - `backend/tests/test_session.py` — 7/7 tests passing
 
 - [ ] **Task 10: Streak Tracker**
   - `backend/memoryforge/streak/tracker.py`
