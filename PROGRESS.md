@@ -66,3 +66,29 @@
 - Venv: `backend/.venv` — run tests with `backend/.venv/bin/python -m pytest`
 - Design spec: `docs/superpowers/specs/2026-04-13-memoryforge-design.md`
 - After Plan 1: Plan 2 (Electron frontend), Plan 3 (nightly daemon + v2)
+
+---
+
+# Plan 2 — Electron + React Frontend
+
+## Plan Being Executed
+`docs/superpowers/plans/2026-04-14-plan2-electron-frontend.md`
+
+## How to Resume
+Find first unchecked task below. Tell Claude: "Resume MemoryForge Plan 2 using subagent-driven development, starting at Task N"
+
+## Task Status
+
+- [x] **Task 1: Project Scaffolding** — commit `bdedc0e`
+  - `frontend/` created with package.json, vite.config.js, tailwind, electron shell files
+  - `npm run build` produces `dist/` cleanly
+- [ ] **Task 2: API Client**
+- [ ] **Task 3: Layout Shell + UI Components**
+- [ ] **Task 4: Dashboard Screen**
+- [ ] **Task 5: Subject Library Screen**
+- [ ] **Task 6: Upload Material Screen**
+- [ ] **Task 7: Study Session Screen**
+- [ ] **Task 8: Learning Plan Screen**
+- [ ] **Task 9: Performance History Screen**
+- [ ] **Task 10: Electron Main Process + FastAPI Integration**
+- [ ] **Task 11: Final Build Verification**
