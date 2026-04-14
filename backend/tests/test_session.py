@@ -6,7 +6,6 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 
 from memoryforge.session.engine import SessionEngine, SessionState
-from memoryforge.session.question_registry import QuestionRegistry
 from memoryforge.session.grader import GradeResult
 
 
@@ -44,16 +43,18 @@ class TestSessionEngine:
         assert engine.ku == sample_ku
         assert engine.quiz_format == "free_response"
 
-    def test_session_state_transitions(self, sample_ku):
-        """Test session state progression: ACTIVE -> GRADED -> COMPLETED."""
+    @pytest.mark.asyncio
+    async def test_session_state_transitions(self, sample_ku):
+        """Test session state: ACTIVE -> grade_answer -> GRADED -> complete_session -> COMPLETED."""
         engine = SessionEngine(ku=sample_ku, quiz_format="multiple_choice")
         assert engine.state == SessionState.ACTIVE
 
-        # Manually transition states for testing
-        engine.state = SessionState.GRADED
+        grade = GradeResult(quality=5, correct=True, feedback="Correct!")
+        with patch.object(engine, '_grade_response', return_value=grade):
+            await engine.grade_answer("B")
         assert engine.state == SessionState.GRADED
 
-        engine.state = SessionState.COMPLETED
+        engine.complete_session()
         assert engine.state == SessionState.COMPLETED
 
     @pytest.mark.asyncio
@@ -80,12 +81,20 @@ class TestSessionEngine:
             assert prompt is not None
             assert isinstance(prompt, str)
 
-    def test_session_tracks_attempts(self, sample_ku):
-        """Test that SessionEngine tracks number of attempts."""
+    @pytest.mark.asyncio
+    async def test_session_tracks_attempts(self, sample_ku):
+        """Test that grade_answer increments attempt_count."""
         engine = SessionEngine(ku=sample_ku, quiz_format="multiple_choice")
         assert engine.attempt_count == 0
-        engine.attempt_count += 1
+
+        grade = GradeResult(quality=5, correct=True, feedback="Correct!")
+        with patch.object(engine, '_grade_response', return_value=grade):
+            await engine.grade_answer("B")
         assert engine.attempt_count == 1
+
+        with patch.object(engine, '_grade_response', return_value=grade):
+            await engine.grade_answer("B")
+        assert engine.attempt_count == 2
 
     def test_complete_session(self, sample_ku):
         """Test session completion."""
@@ -95,3 +104,11 @@ class TestSessionEngine:
 
         engine.complete_session()
         assert engine.state == SessionState.COMPLETED
+
+    @pytest.mark.asyncio
+    async def test_reteach_skipped_on_correct_answer(self, sample_ku):
+        """reteach_answer returns None if answer was correct."""
+        engine = SessionEngine(ku=sample_ku, quiz_format="free_response")
+        engine.grade_result = GradeResult(quality=5, correct=True, feedback="Great!")
+        result = await engine.reteach_answer()
+        assert result is None

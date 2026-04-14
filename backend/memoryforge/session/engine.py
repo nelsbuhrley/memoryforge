@@ -36,10 +36,10 @@ class SessionEngine:
         self.state = SessionState.GRADED
         return self.grade_result
 
-    async def reteach_answer(self) -> str:
+    async def reteach_answer(self) -> str | None:
         """Generate a reteach prompt for incorrect answers."""
         if not self.grade_result or self.grade_result.correct:
-            return ""
+            return None
         self.reteach_prompt = await self._build_reteach_prompt()
         return self.reteach_prompt
 
@@ -49,8 +49,8 @@ class SessionEngine:
 
     async def _grade_response(self, student_answer: str) -> GradeResult:
         """Internal grading — delegates to grader module."""
-        return GradeResult(quality=3, correct=True, feedback="Response graded.")
+        raise NotImplementedError("Wire up to grader.grade_free_response()")
 
     async def _build_reteach_prompt(self) -> str:
         """Internal reteach — delegates to Claude service."""
-        return "Let's review this concept..."
+        raise NotImplementedError("Wire up to claude_service reteach prompt")
