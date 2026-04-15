@@ -13,6 +13,7 @@ router = APIRouter(prefix="/sessions", tags=["sessions"])
 
 # In-memory store: session_id -> SessionEngine
 _active_engines: dict[int, SessionEngine] = {}
+_active_queues: dict[int, list] = {}  # session_id -> remaining KU queue
 
 
 class StartSession(BaseModel):
@@ -48,6 +49,7 @@ def start_session(body: StartSession, request: Request):
         strictness=2,
     )
     _active_engines[session_id] = engine
+    _active_queues[session_id] = queue[1:]  # store remaining queue
 
     return {
         "session_id": session_id,
@@ -97,11 +99,34 @@ async def session_turn(session_id: int, body: TurnBody, request: Request):
     if not grade_result.correct:
         reteach = await engine.reteach_answer()
 
+    # Advance to next KU in queue
+    remaining = _active_queues.get(session_id, [])
+    next_ku = None
+    next_question = None
+    done = len(remaining) == 0
+
+    if not done:
+        next_item = remaining[0]
+        _active_queues[session_id] = remaining[1:]
+        registry = QuestionRegistry()
+        next_question = registry.generate(next_item.ku, engine.quiz_format)
+        next_ku = next_item.ku
+        # Swap engine to new KU
+        _active_engines[session_id] = SessionEngine(
+            ku=next_item.ku,
+            quiz_format=engine.quiz_format,
+            question=next_question,
+            strictness=engine.strictness,
+        )
+
     return {
         "correct": grade_result.correct,
         "grade": grade_result.quality,
         "feedback": grade_result.feedback,
         "reteach": reteach,
+        "done": done,
+        "next_ku": next_ku,
+        "next_question": next_question,
     }
 
 
@@ -111,6 +136,7 @@ def end_session(session_id: int, request: Request):
         raise HTTPException(status_code=404, detail="Session not found")
 
     engine = _active_engines.pop(session_id)
+    _active_queues.pop(session_id, None)
     engine.complete_session()
 
     repo = request.app.state.repo

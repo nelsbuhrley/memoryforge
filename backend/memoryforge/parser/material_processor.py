@@ -14,7 +14,7 @@ from memoryforge.parser.pdf_parser import parse_pdf
 from memoryforge.parser.docx_parser import parse_docx
 from memoryforge.parser.text_parser import parse_text, parse_markdown
 from memoryforge.claude_service.prompts import build_ku_extraction_prompt
-from memoryforge.claude_service.client import query_claude_json
+from memoryforge.claude_service.client import query_claude_json, SONNET
 
 
 class MaterialProcessor:
@@ -117,25 +117,32 @@ class MaterialProcessor:
             for i in range(0, len(text), chunk_size):
                 chunks.append((None, text[i:i + chunk_size]))
 
+        MAX_KUS_PER_MATERIAL = 20
+        KUS_PER_CHUNK = 4
         total_kus = 0
         for heading, text_chunk in chunks:
             if not text_chunk.strip():
                 continue
+            if total_kus >= MAX_KUS_PER_MATERIAL:
+                break
 
             prompt = build_ku_extraction_prompt(
                 text_chunk=text_chunk,
                 subject_name=subject_name,
                 section_heading=heading,
+                max_kus=KUS_PER_CHUNK,
             )
 
             try:
-                kus_data = await query_claude_json(prompt)
+                kus_data = await query_claude_json(prompt, model=SONNET)
                 if not isinstance(kus_data, list):
                     kus_data = [kus_data]
             except Exception:
                 continue
 
             for ku_data in kus_data:
+                if total_kus >= MAX_KUS_PER_MATERIAL:
+                    break
                 self.repo.create_ku(
                     subject_id=mat["subject_id"],
                     material_id=material_id,

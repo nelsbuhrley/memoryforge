@@ -42,4 +42,8 @@ export const getPlan = (subjectId) => request(`/plans/${subjectId}`, 'GET')
 export const createPlan = (data) => request('/plans', 'POST', data)
 
 // Admin
-export const runNightly = () => request('/admin/nightly', 'POST')
+export const runNightly = (force = false) => request(`/admin/nightly${force ? '?force=true' : ''}`, 'POST')
+export const parseMaterials = (force = false) => request(`/admin/parse-materials${force ? '?force=true' : ''}`, 'POST')
+export const updatePlans = () => request('/admin/update-plans', 'POST')
+export const runDecayDetection = () => request('/admin/decay-detection', 'POST')
+export const runAnalytics = () => request('/admin/analytics', 'POST')

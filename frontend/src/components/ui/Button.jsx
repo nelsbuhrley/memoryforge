@@ -1,7 +1,7 @@
 const variants = {
   primary: 'bg-forge-600 hover:bg-forge-700 text-white',
   secondary: 'bg-slate-700 hover:bg-slate-600 text-white',
-  ghost: 'bg-transparent hover:bg-slate-800 text-slate-300',
+  ghost: 'bg-transparent hover:bg-slate-700 text-slate-200 border border-slate-600 hover:border-slate-500',
   danger: 'bg-red-600 hover:bg-red-700 text-white',
 }
 

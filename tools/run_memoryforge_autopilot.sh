@@ -20,7 +20,7 @@ python3 "$SCRIPT_DIR/claude_autopilot.py" \
   --start-tz America/Boise \
   --command claude \
   --permission-mode auto \
-  --prompt $'First set to Use caveman ultra mode and ask minimal (if possible no) questions then\nPlease do the following:\n1) Review your memory\n2) Review and update PROGRESS.md\n3) Get back to work on building the memoryforge tool\n If you have completed everything planed thus far for the project please begin planing stage 2 and then stop and wait for me to review the plans with you.' \
+  --prompt $'First set to Use caveman ultra mode and ask minimal (if possible no) questions then\nPlease do the following:\n1) Review your memory\n2) Review and update PROGRESS.md\n3) Get back to work on debugging the memoryforge tool\n If you complete all tasks please continue testing functionality and even play-testing the quizzes yourself\n avoid asking questions or asking for permission as much as possible' \
   --min-retry-minutes 5 \
   --availability-buffer-minutes 1 \
   2>&1 | tee -a "$LOG_FILE"

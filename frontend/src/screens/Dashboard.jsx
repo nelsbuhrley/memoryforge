@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { getDashboard, runNightly } from '../api/client'
+import { getDashboard, runNightly, runDecayDetection, runAnalytics } from '../api/client'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
 import Spinner from '../components/ui/Spinner'
@@ -20,14 +20,28 @@ export default function Dashboard() {
       .finally(() => setLoading(false))
   }, [])
 
-  const handleRunNightly = async () => {
+  const handleRunNightly = async (force = false) => {
     setNightlyRunning(true)
     setNightlyResult(null)
     setNightlyError(null)
     try {
-      const result = await runNightly()
+      const result = await runNightly(force)
       setNightlyResult(result)
-      // Reload dashboard stats after nightly run
+      getDashboard().then(setData).catch(() => {})
+    } catch (e) {
+      setNightlyError(e.message)
+    } finally {
+      setNightlyRunning(false)
+    }
+  }
+
+  const handleJob = async (fn, label) => {
+    setNightlyRunning(true)
+    setNightlyResult(null)
+    setNightlyError(null)
+    try {
+      const result = await fn()
+      setNightlyResult({ status: 'complete', label, results: { [label]: result } })
       getDashboard().then(setData).catch(() => {})
     } catch (e) {
       setNightlyError(e.message)
@@ -47,14 +61,14 @@ export default function Dashboard() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-slate-100">Dashboard</h1>
         <div className="flex items-center gap-3">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleRunNightly}
-            disabled={nightlyRunning}
-            title="Run nightly batch jobs now (parse pending materials, update plans, detect decay)"
-          >
-            {nightlyRunning ? <><Spinner size="sm" /> Running...</> : '⚡ Run Nightly'}
+          <Button variant="ghost" size="sm" onClick={() => handleJob(runDecayDetection, 'decay_detection')} disabled={nightlyRunning} title="Flag KUs overdue by >7 days">
+            Decay Check
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => handleJob(runAnalytics, 'analytics')} disabled={nightlyRunning} title="Rollup analytics">
+            Analytics
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => handleRunNightly(true)} disabled={nightlyRunning} title="Run all jobs, force re-parse zero-KU materials">
+            {nightlyRunning ? <><Spinner size="sm" /> Running...</> : '⚡ Run All'}
           </Button>
           <Link to="/session">
             <Button size="lg">Start Study Session</Button>

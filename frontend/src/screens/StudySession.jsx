@@ -79,6 +79,11 @@ export default function StudySession() {
   const ku = session?.current_ku
   const question = session?.question
 
+  // Guard: session active but question not yet loaded
+  if (state === 'active' && !question) {
+    return <div className="flex justify-center pt-20"><Spinner size="lg" /></div>
+  }
+
   return (
     <div className="max-w-2xl space-y-4">
       <div className="flex items-center justify-between">
@@ -88,6 +93,8 @@ export default function StudySession() {
           <Button variant="ghost" size="sm" onClick={end}>End Session</Button>
         </div>
       </div>
+
+      {error && <p className="text-red-400 text-sm">{error}</p>}
 
       {ku && (
         <Card>
@@ -118,24 +125,32 @@ export default function StudySession() {
         </Card>
       )}
 
-      <Card>
-        <textarea
-          placeholder="Your answer..."
-          value={answer}
-          onChange={(e) => setAnswer(e.target.value)}
-          onKeyDown={(e) => { if (e.key === 'Enter' && e.metaKey) handleSubmit() }}
-          rows={4}
-          className="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-slate-100 text-sm resize-none focus:outline-none focus:border-forge-500"
-        />
-        <div className="flex justify-end mt-2">
-          <Button
-            onClick={handleSubmit}
-            disabled={!answer.trim() || state === 'grading'}
-          >
-            {state === 'grading' ? <><Spinner size="sm" /> Grading...</> : 'Submit'}
+      {lastResult ? (
+        <div className="flex justify-end">
+          <Button onClick={() => setLastResult(null)} size="lg">
+            Next Question →
           </Button>
         </div>
-      </Card>
+      ) : (
+        <Card>
+          <textarea
+            placeholder="Your answer..."
+            value={answer}
+            onChange={(e) => setAnswer(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter' && e.metaKey) handleSubmit() }}
+            rows={4}
+            className="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-slate-100 text-sm resize-none focus:outline-none focus:border-forge-500"
+          />
+          <div className="flex justify-end mt-2">
+            <Button
+              onClick={handleSubmit}
+              disabled={!answer.trim() || state === 'grading'}
+            >
+              {state === 'grading' ? <><Spinner size="sm" /> Grading...</> : 'Submit'}
+            </Button>
+          </div>
+        </Card>
+      )}
     </div>
   )
 }

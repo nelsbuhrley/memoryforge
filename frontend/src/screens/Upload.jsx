@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { getSubjects, uploadMaterial, getMaterials, parseNow } from '../api/client'
+import { getSubjects, uploadMaterial, getMaterials, parseNow, parseMaterials } from '../api/client'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
 import Spinner from '../components/ui/Spinner'
@@ -21,6 +21,8 @@ export default function Upload() {
   const [uploading, setUploading] = useState(false)
   const [uploadError, setUploadError] = useState(null)
   const [parsing, setParsing] = useState({}) // { [materialId]: true }
+  const [parseAllRunning, setParseAllRunning] = useState(false)
+  const [parseAllResult, setParseAllResult] = useState(null)
 
   const load = async () => {
     const [s, m] = await Promise.all([getSubjects(), getMaterials()])
@@ -62,6 +64,20 @@ export default function Upload() {
     }
   }
 
+  const handleParseAll = async (force = false) => {
+    setParseAllRunning(true)
+    setParseAllResult(null)
+    try {
+      const result = await parseMaterials(force)
+      setParseAllResult(result)
+      await load()
+    } catch (e) {
+      setParseAllResult({ error: e.message })
+    } finally {
+      setParseAllRunning(false)
+    }
+  }
+
   if (loading) return <div className="flex justify-center pt-20"><Spinner size="lg" /></div>
 
   return (
@@ -89,7 +105,7 @@ export default function Upload() {
             type="file"
             accept=".pdf,.txt,.md,.docx"
             onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-            className="block w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-forge-900 file:text-forge-300 file:text-sm hover:file:bg-forge-800 cursor-pointer"
+            className="block w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-forge-600 file:text-white file:text-sm file:font-medium file:cursor-pointer hover:file:bg-forge-500 file:transition-colors cursor-pointer"
           />
           {file && <p className="text-slate-500 text-xs mt-1">{file.name} ({(file.size / 1024).toFixed(1)} KB)</p>}
         </div>
@@ -105,7 +121,25 @@ export default function Upload() {
       </Card>
 
       <div>
-        <h2 className="text-lg font-semibold text-slate-200 mb-3">Uploaded Materials</h2>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-lg font-semibold text-slate-200">Uploaded Materials</h2>
+          <div className="flex gap-2">
+            <Button variant="ghost" size="sm" onClick={() => handleParseAll(false)} disabled={parseAllRunning} title="Parse any pending/unprocessed materials">
+              {parseAllRunning ? <><Spinner size="sm" /> Parsing...</> : 'Parse Pending'}
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => handleParseAll(true)} disabled={parseAllRunning} title="Force re-parse all materials including complete ones with 0 KUs">
+              Force Parse All
+            </Button>
+          </div>
+        </div>
+        {parseAllResult && (
+          <div className={`mb-3 p-3 rounded-lg text-sm ${parseAllResult.error ? 'bg-red-900/40 text-red-300' : 'bg-slate-800 text-slate-300'}`}>
+            {parseAllResult.error
+              ? `Error: ${parseAllResult.error}`
+              : `Parsed ${parseAllResult.processed} material(s). ${parseAllResult.details?.map(d => `${d.filename}: ${d.ku_count} KUs`).join(', ')}`
+            }
+          </div>
+        )}
         <div className="space-y-2">
           {materials.length === 0 && (
             <p className="text-slate-500">No materials uploaded yet.</p>
@@ -122,18 +156,16 @@ export default function Upload() {
                 </p>
               </div>
               <Badge color={STATUS_COLOR[m.parse_status] ?? 'slate'}>{m.parse_status}</Badge>
-              {m.parse_status !== 'complete' && (
-                <Button
-                  size="sm"
-                  variant={m.parse_status === 'error' ? 'danger' : 'secondary'}
-                  disabled={!!parsing[m.id]}
-                  onClick={() => handleParseNow(m.id)}
-                >
-                  {parsing[m.id]
-                    ? <><Spinner size="sm" /> Parsing...</>
-                    : m.parse_status === 'error' ? 'Retry Parse' : 'Force Parse'}
-                </Button>
-              )}
+              <Button
+                size="sm"
+                variant={m.parse_status === 'error' ? 'danger' : 'ghost'}
+                disabled={!!parsing[m.id]}
+                onClick={() => handleParseNow(m.id)}
+              >
+                {parsing[m.id]
+                  ? <><Spinner size="sm" /> Parsing...</>
+                  : m.parse_status === 'error' ? 'Retry' : 'Parse Now'}
+              </Button>
             </Card>
           ))}
         </div>

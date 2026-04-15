@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { getSubjects, createSubject } from '../api/client'
+import { getSubjects, createSubject, updatePlans } from '../api/client'
 import Card from '../components/ui/Card'
 import Button from '../components/ui/Button'
 import Spinner from '../components/ui/Spinner'
@@ -12,6 +12,8 @@ export default function SubjectLibrary() {
   const [showForm, setShowForm] = useState(false)
   const [form, setForm] = useState({ name: '', description: '', quiz_format: 'mixed', grading_strictness: 2 })
   const [creating, setCreating] = useState(false)
+  const [planRunning, setPlanRunning] = useState(false)
+  const [planResult, setPlanResult] = useState(null)
 
   const load = () =>
     getSubjects().then(setSubjects).finally(() => setLoading(false))
@@ -32,14 +34,41 @@ export default function SubjectLibrary() {
     }
   }
 
+  const handleUpdatePlans = async () => {
+    setPlanRunning(true)
+    setPlanResult(null)
+    try {
+      const result = await updatePlans()
+      setPlanResult(result)
+    } catch (e) {
+      setPlanResult({ error: e.message })
+    } finally {
+      setPlanRunning(false)
+    }
+  }
+
   if (loading) return <div className="flex justify-center pt-20"><Spinner size="lg" /></div>
 
   return (
     <div className="max-w-3xl space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-slate-100">Subject Library</h1>
-        <Button onClick={() => setShowForm((v) => !v)}>New Subject</Button>
+        <div className="flex gap-2">
+          <Button variant="ghost" size="sm" onClick={handleUpdatePlans} disabled={planRunning} title="Regenerate learning plans for all active subjects using Claude">
+            {planRunning ? <><Spinner size="sm" /> Updating...</> : 'Update Plans'}
+          </Button>
+          <Button onClick={() => setShowForm((v) => !v)}>New Subject</Button>
+        </div>
       </div>
+
+      {planResult && (
+        <div className={`p-3 rounded-lg text-sm ${planResult.error ? 'bg-red-900/40 text-red-300' : 'bg-slate-800 text-slate-300'}`}>
+          {planResult.error
+            ? `Error: ${planResult.error}`
+            : `Updated ${planResult.updated} plan(s): ${planResult.details?.map(d => d.name).join(', ') || 'none'}`
+          }
+        </div>
+      )}
 
       {showForm && (
         <Card>

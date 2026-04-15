@@ -33,8 +33,12 @@ def build_session_queue(
     if not due_kus and not new_topics:
         return []
 
-    # Sort due_kus by difficulty (easier first)
-    sorted_due = sorted(due_kus, key=lambda ku: ku.get("difficulty", 3))
+    import random
+
+    # Shuffle first so sessions vary, then stable-sort by difficulty
+    shuffled = list(due_kus)
+    random.shuffle(shuffled)
+    sorted_due = sorted(shuffled, key=lambda ku: ku.get("difficulty", 3))
 
     # Interleave subjects if requested
     if interleave_ratio > 0 and sorted_due:

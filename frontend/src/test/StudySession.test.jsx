@@ -21,6 +21,9 @@ const mockTurn = {
   grade: 4,
   feedback: 'Great answer! F=ma is well stated.',
   reteach: null,
+  done: false,
+  next_ku: { id: 11, concept: 'Newton\'s Third Law', concept_summary: 'Action-reaction' },
+  next_question: 'Explain Newton\'s Third Law in your own words.',
 }
 
 const mockEnd = { session_id: 1, correct: 4, total: 5, accuracy: 0.8 }

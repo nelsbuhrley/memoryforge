@@ -9,11 +9,15 @@ def build_ku_extraction_prompt(
     text_chunk: str,
     subject_name: str,
     section_heading: str | None = None,
+    max_kus: int = 4,
 ) -> str:
     heading_ctx = f"\nSection: {section_heading}" if section_heading else ""
     return f"""You are an expert educator analyzing study material for the subject "{subject_name}".{heading_ctx}
 
-Extract distinct knowledge units (concepts) from the following text. Each knowledge unit should represent one testable concept.
+Extract the {max_kus} MOST IMPORTANT and distinct knowledge units from this text. Be selective — only extract concepts that are:
+- Core ideas a student must genuinely understand (not peripheral details or examples)
+- Testable through reasoning, not just vocabulary recall
+- Meaningful on their own without excessive context
 
 For each knowledge unit, provide:
 - concept: A clear, complete statement of the concept (1-3 sentences)
@@ -22,7 +26,7 @@ For each knowledge unit, provide:
 - tags: Relevant topic tags as a list
 - prerequisites: List of concept_summaries this depends on (from this batch or general knowledge)
 
-Return valid JSON array. Example format:
+Return valid JSON array of EXACTLY {max_kus} or fewer items. Example format:
 [
   {{
     "concept": "Mitochondria produce ATP through oxidative phosphorylation...",

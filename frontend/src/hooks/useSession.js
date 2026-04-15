@@ -28,7 +28,17 @@ export function useSession() {
     try {
       const result = await submitTurn(session.session_id, answer)
       setTurns((t) => [...t, { question: session.question, answer, result }])
-      setState('active')
+      if (result.done) {
+        // No more KUs — auto-end session
+        const data = await endSession(session.session_id)
+        setSummary(data)
+        setState('ended')
+      } else {
+        if (result.next_question) {
+          setSession((s) => ({ ...s, current_ku: result.next_ku, question: result.next_question }))
+        }
+        setState('active')
+      }
       return result
     } catch (e) {
       setError(e.message)
