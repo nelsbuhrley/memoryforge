@@ -1,6 +1,6 @@
 const { app, BrowserWindow } = require('electron')
 const path = require('path')
-const { startServer, stopServer } = require('./server')
+const { startServer, stopServer } = require('./server.cjs')
 
 const isDev = process.env.NODE_ENV !== 'production'
 
@@ -11,7 +11,7 @@ function createWindow() {
     minWidth: 900,
     minHeight: 600,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(__dirname, 'preload.cjs'),
       contextIsolation: true,
       nodeIntegration: false,
     },
