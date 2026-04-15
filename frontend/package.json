@@ -2,6 +2,28 @@
   "name": "memoryforge",
   "version": "0.1.0",
   "private": true,
+  "build": {
+    "appId": "com.memoryforge.app",
+    "productName": "MemoryForge",
+    "mac": {
+      "target": "dmg",
+      "category": "public.app-category.education"
+    },
+    "directories": {
+      "output": "dist-electron"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "../backend",
+        "to": "backend",
+        "filter": ["**/*", "!.venv/**/*", "!__pycache__/**/*"]
+      }
+    ]
+  },
   "main": "electron/main.js",
   "scripts": {
     "dev": "concurrently \"vite --port 5173\" \"wait-on http://localhost:5173 && electron .\"",
