@@ -13,8 +13,7 @@ MemoryForge is an AI-powered flashcard and study app. You upload documents (PDF,
 | npm | 9 or higher | `npm --version` |
 | Git | any | `git --version` |
 
-You also need an **Anthropic API key** for the AI question-generation features.
-Get one at [console.anthropic.com](https://console.anthropic.com).
+You also need **Claude Code** installed and authenticated on your machine. MemoryForge uses the `claude-agent-sdk` to run Claude through the Claude Code CLI — no separate Anthropic API key is required.
 
 ---
 
@@ -52,13 +51,13 @@ Your terminal prompt will change to show `(.venv)` — this means it's active.
 pip install -e ".[dev]"
 ```
 
-### 2d. Set your Anthropic API key
+### 2d. Verify Claude Code is authenticated
 
 ```bash
-export ANTHROPIC_API_KEY="sk-ant-..."
+claude --version
 ```
 
-> **Tip:** Add this line to your `~/.zshrc` or `~/.bashrc` so you don't have to re-enter it each session.
+If not installed, follow the setup at [claude.ai/code](https://claude.ai/code). You must be logged in for question generation and grading to work.
 
 ### 2e. Verify the backend works
 
@@ -102,7 +101,6 @@ Dev mode gives you live reload and browser DevTools. You need **two terminals**.
 ```bash
 cd memoryforge/backend
 source .venv/bin/activate
-export ANTHROPIC_API_KEY="sk-ant-..."
 python -m uvicorn memoryforge.api.app:create_app --factory --host 127.0.0.1 --port 9147
 ```
 
@@ -211,12 +209,10 @@ npm test
 - Make sure the backend is running first (Terminal 1 step above).
 - Confirm it shows `Application startup complete` before opening the frontend.
 
-**"ANTHROPIC_API_KEY not set" error**
-- Run `export ANTHROPIC_API_KEY="sk-ant-..."` in the terminal where you start the backend.
-
 **Parse hangs or never completes**
-- Check that your API key is valid and has credits at [console.anthropic.com](https://console.anthropic.com).
+- Make sure Claude Code is installed and you're logged in: `claude --version`
 - Large PDFs can take up to 60 seconds.
+- If `claude-agent-sdk` errors appear in the backend terminal, re-authenticate Claude Code.
 
 **Port 9147 already in use**
 ```bash
