@@ -20,6 +20,7 @@ export default function Upload() {
   const [file, setFile] = useState(null)
   const [uploading, setUploading] = useState(false)
   const [uploadError, setUploadError] = useState(null)
+  const [parsing, setParsing] = useState({}) // { [materialId]: true }
 
   const load = async () => {
     const [s, m] = await Promise.all([getSubjects(), getMaterials()])
@@ -50,8 +51,15 @@ export default function Upload() {
   }
 
   const handleParseNow = async (id) => {
-    await parseNow(id).catch(() => null)
-    await load()
+    setParsing((p) => ({ ...p, [id]: true }))
+    try {
+      await parseNow(id)
+    } catch (e) {
+      // error visible via status badge after reload
+    } finally {
+      setParsing((p) => ({ ...p, [id]: false }))
+      await load()
+    }
   }
 
   if (loading) return <div className="flex justify-center pt-20"><Spinner size="lg" /></div>
@@ -106,12 +114,24 @@ export default function Upload() {
             <Card key={m.id} className="flex items-center gap-3">
               <div className="flex-1">
                 <p className="text-slate-200 text-sm font-medium">{m.filename}</p>
-                <p className="text-slate-500 text-xs">{m.file_type?.toUpperCase()}</p>
+                <p className="text-slate-500 text-xs">
+                  {m.file_type?.toUpperCase()}
+                  {m.ku_count != null && m.ku_count > 0 && (
+                    <span className="ml-2 text-forge-400">{m.ku_count} knowledge units</span>
+                  )}
+                </p>
               </div>
               <Badge color={STATUS_COLOR[m.parse_status] ?? 'slate'}>{m.parse_status}</Badge>
-              {m.parse_status === 'pending' && (
-                <Button size="sm" variant="secondary" onClick={() => handleParseNow(m.id)}>
-                  Parse Now
+              {m.parse_status !== 'complete' && (
+                <Button
+                  size="sm"
+                  variant={m.parse_status === 'error' ? 'danger' : 'secondary'}
+                  disabled={!!parsing[m.id]}
+                  onClick={() => handleParseNow(m.id)}
+                >
+                  {parsing[m.id]
+                    ? <><Spinner size="sm" /> Parsing...</>
+                    : m.parse_status === 'error' ? 'Retry Parse' : 'Force Parse'}
                 </Button>
               )}
             </Card>

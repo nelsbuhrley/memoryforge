@@ -18,7 +18,7 @@ export const updateSubject = (id, data) => request(`/subjects/${id}`, 'PATCH', d
 export const getMaterials = (subjectId) =>
   request(subjectId ? `/materials?subject_id=${subjectId}` : '/materials', 'GET')
 export const uploadMaterial = (formData) => request('/materials', 'POST', formData, true)
-export const parseNow = (id) => request(`/materials/${id}/parse`, 'POST')
+export const parseNow = (id) => request(`/materials/${id}/parse-now`, 'POST')
 
 // Sessions
 export const startSession = (data) => request('/sessions/start', 'POST', data)
