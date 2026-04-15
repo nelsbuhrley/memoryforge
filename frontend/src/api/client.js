@@ -31,7 +31,7 @@ export const getDashboard = () => request('/dashboard', 'GET')
 
 // Performance / History
 export const getPerformance = (subjectId) =>
-  request(subjectId ? `/history?subject_id=${subjectId}` : '/history', 'GET')
+  request(subjectId ? `/history/performance?subject_id=${subjectId}` : '/history/performance', 'GET')
 
 // Learning Plans
 export const getPlan = (subjectId) => request(`/plans/${subjectId}`, 'GET')
