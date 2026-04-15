@@ -82,13 +82,23 @@ Find first unchecked task below. Tell Claude: "Resume MemoryForge Plan 2 using s
 - [x] **Task 1: Project Scaffolding** — commit `bdedc0e`
   - `frontend/` created with package.json, vite.config.js, tailwind, electron shell files
   - `npm run build` produces `dist/` cleanly
-- [ ] **Task 2: API Client**
-- [ ] **Task 3: Layout Shell + UI Components**
-- [ ] **Task 4: Dashboard Screen**
-- [ ] **Task 5: Subject Library Screen**
-- [ ] **Task 6: Upload Material Screen**
-- [ ] **Task 7: Study Session Screen**
-- [ ] **Task 8: Learning Plan Screen**
-- [ ] **Task 9: Performance History Screen**
-- [ ] **Task 10: Electron Main Process + FastAPI Integration**
-- [ ] **Task 11: Final Build Verification**
+- [x] **Task 2: API Client** — commit `5114be1`
+  - `frontend/src/api/client.js` — 8/8 tests passing
+- [x] **Task 3: Layout Shell + UI Components** — commit `40208cf`
+  - Layout, Nav, Button, Card, Badge, Spinner + 6 screen stubs
+- [x] **Task 4: Dashboard Screen** — commit `adeee20`
+  - `frontend/src/screens/Dashboard.jsx` — 4/4 tests passing
+- [x] **Task 5: Subject Library Screen** — commit `c86dab1`
+  - `frontend/src/screens/SubjectLibrary.jsx` — 3/3 tests passing
+- [x] **Task 6: Upload Material Screen** — commit `cb81622`
+  - `frontend/src/screens/Upload.jsx` — 3/3 tests passing
+- [x] **Task 7: Study Session Screen** — commit `9f76d64`
+  - `frontend/src/screens/StudySession.jsx` + `useSession.js` hook — 4/4 tests passing
+- [x] **Task 8: Learning Plan Screen** — commit `8f9d8d5`
+  - `frontend/src/screens/LearningPlan.jsx` — manual verification (no dedicated tests per spec)
+- [x] **Task 9: Performance History Screen** — commit `8f9d8d5`
+  - `frontend/src/screens/History.jsx` — 3/3 tests passing, recharts accuracy chart
+- [x] **Task 10: Electron Main Process + FastAPI Integration** — commit `db6c2f8`
+  - uvicorn 0.44.0 confirmed in backend venv
+- [x] **Task 11: Final Build Verification** — commit `db6c2f8`
+  - electron-builder config added — 25/25 tests passing, clean production build
