@@ -139,6 +139,9 @@ export default function StudySession() {
             onChange={(e) => setAnswer(e.target.value)}
             onKeyDown={(e) => { if (e.key === 'Enter' && e.metaKey) handleSubmit() }}
             rows={4}
+            spellCheck={true}
+            autoCorrect="on"
+            autoCapitalize="sentences"
             className="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-slate-100 text-sm resize-none focus:outline-none focus:border-forge-500"
           />
           <div className="flex justify-end mt-2">

@@ -78,6 +78,9 @@ export default function SubjectLibrary() {
               placeholder="Subject name"
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+              spellCheck={true}
+              autoCorrect="on"
+              autoCapitalize="words"
               className="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-forge-500"
             />
             <input
@@ -85,6 +88,9 @@ export default function SubjectLibrary() {
               placeholder="Description (optional)"
               value={form.description}
               onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+              spellCheck={true}
+              autoCorrect="on"
+              autoCapitalize="sentences"
               className="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-forge-500"
             />
             <div className="flex gap-3">

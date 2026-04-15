@@ -25,6 +25,9 @@ function createWindow() {
   } else {
     win.loadFile(path.join(__dirname, '..', 'dist', 'index.html'))
   }
+
+  // Enable built-in spellchecker for text inputs and textareas
+  win.webContents.session.setSpellCheckerLanguages(['en-US'])
 }
 
 app.whenReady().then(async () => {
