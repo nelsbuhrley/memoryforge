@@ -69,6 +69,22 @@ class QuestionRegistry:
 
         return eligible[0]
 
+    def generate(self, ku: dict, quiz_format_pref: str) -> str:
+        """Generate a question string for a knowledge unit."""
+        difficulty = ku.get("difficulty", 3)
+        fmt = self.select_format(difficulty, quiz_format_pref)
+        concept = ku.get("concept", "this concept")
+        summary = ku.get("concept_summary", concept)
+
+        if fmt == "fill_in_blank":
+            return f"Fill in the blank: ____________ refers to {summary}."
+        elif fmt == "multiple_choice":
+            return f"Which of the following best describes '{summary}'?\n(Answer in your own words or choose the best description.)"
+        elif fmt == "apply_the_concept":
+            return f"Apply the concept: Give a real-world example that demonstrates '{summary}'."
+        else:  # free_response
+            return f"Explain '{summary}' in your own words."
+
 
 def get_question_format(
     difficulty: int,

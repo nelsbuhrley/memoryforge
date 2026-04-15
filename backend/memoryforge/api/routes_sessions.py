@@ -38,14 +38,16 @@ def start_session(body: StartSession, request: Request):
     session_id = repo.create_session()
     first_item = queue[0]
 
+    registry = QuestionRegistry()
+    question = registry.generate(first_item.ku, body.quiz_format)
+
     engine = SessionEngine(
         ku=first_item.ku,
         quiz_format=body.quiz_format,
+        question=question,
+        strictness=2,
     )
     _active_engines[session_id] = engine
-
-    registry = QuestionRegistry()
-    question = registry.generate(first_item.ku, body.quiz_format)
 
     return {
         "session_id": session_id,
@@ -87,7 +89,7 @@ async def session_turn(session_id: int, body: TurnBody, request: Request):
         question_text="",
         student_response=body.answer,
         claude_feedback=grade_result.feedback,
-        grade=grade_result.grade,
+        grade=grade_result.quality,
         time_taken_seconds=None,
     )
 
@@ -97,7 +99,7 @@ async def session_turn(session_id: int, body: TurnBody, request: Request):
 
     return {
         "correct": grade_result.correct,
-        "grade": grade_result.grade,
+        "grade": grade_result.quality,
         "feedback": grade_result.feedback,
         "reteach": reteach,
     }

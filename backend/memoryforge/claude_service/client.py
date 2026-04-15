@@ -17,21 +17,20 @@ async def query_claude(prompt: str) -> str:
     Falls back gracefully if the SDK is not available.
     """
     try:
-        from claude_agent_sdk import query as agent_query
+        from claude_agent_sdk import query as agent_query, ResultMessage
     except ImportError:
         raise RuntimeError(
             "claude-agent-sdk is not installed. "
             "Install with: pip install claude-agent-sdk"
         )
 
-    response_parts = []
     async for message in agent_query(prompt=prompt):
-        if hasattr(message, "content"):
-            response_parts.append(str(message.content))
-        else:
-            response_parts.append(str(message))
+        if isinstance(message, ResultMessage):
+            if message.is_error:
+                raise RuntimeError(f"Claude error: {message.result}")
+            return message.result or ""
 
-    return "".join(response_parts)
+    raise RuntimeError("No result received from Claude")
 
 
 async def query_claude_json(prompt: str) -> dict[str, Any]:

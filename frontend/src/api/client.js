@@ -5,6 +5,10 @@ async function request(path, method = 'GET', body = undefined, isFormData = fals
   const opts = { method, headers }
   if (body !== undefined) opts.body = isFormData ? body : JSON.stringify(body)
   const res = await fetch(`${base()}${path}`, opts)
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: res.statusText }))
+    throw new Error(err.detail || `HTTP ${res.status}`)
+  }
   return res.json()
 }
 
@@ -23,7 +27,7 @@ export const parseNow = (id) => request(`/materials/${id}/parse-now`, 'POST')
 // Sessions
 export const startSession = (data) => request('/sessions/start', 'POST', data)
 export const getNextQuestion = (sessionId) => request(`/sessions/${sessionId}/next`, 'GET')
-export const submitTurn = (sessionId, data) => request(`/sessions/${sessionId}/submit`, 'POST', data)
+export const submitTurn = (sessionId, answer) => request(`/sessions/${sessionId}/turn`, 'POST', { answer })
 export const endSession = (sessionId) => request(`/sessions/${sessionId}/end`, 'POST')
 
 // Dashboard
