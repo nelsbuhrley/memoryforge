@@ -75,15 +75,36 @@ class QuestionRegistry:
         fmt = self.select_format(difficulty, quiz_format_pref)
         concept = ku.get("concept", "this concept")
         summary = ku.get("concept_summary", concept)
+        subject = ku.get("subject_name", "")
+        subject_ctx = f" in the context of {subject}" if subject else ""
 
         if fmt == "fill_in_blank":
-            return f"Fill in the blank: ____________ refers to {summary}."
+            # Causal/conditional reasoning — requires understanding, not just recall
+            return (
+                f"Complete the reasoning: If '{concept}' were removed or absent{subject_ctx}, "
+                f"the key consequence would be ____________, because {summary}."
+            )
         elif fmt == "multiple_choice":
-            return f"Which of the following best describes '{summary}'?\n(Answer in your own words or choose the best description.)"
+            # Distinguishing — forces comparison against near-miss alternatives
+            return (
+                f"What distinguishes '{concept}' from superficially similar ideas{subject_ctx}? "
+                f"Identify the key property that sets it apart, given that: {summary}. "
+                f"\n(Explain your reasoning — do not just restate the definition.)"
+            )
         elif fmt == "apply_the_concept":
-            return f"Apply the concept: Give a real-world example that demonstrates '{summary}'."
-        else:  # free_response
-            return f"Explain '{summary}' in your own words."
+            # Application with failure analysis — requires reasoning about conditions
+            return (
+                f"Describe a situation{subject_ctx} where '{concept}' would be applied. "
+                f"Then identify one condition under which it would break down or give the wrong result. "
+                f"(Context: {summary})"
+            )
+        else:  # free_response — hardest, most analytical
+            return (
+                f"Analyze '{concept}'{subject_ctx}: What are the key conditions that make it work correctly, "
+                f"and what happens when those conditions are violated? "
+                f"Go beyond restating the definition — explain the underlying mechanism. "
+                f"(Definition for reference: {summary})"
+            )
 
 
 def get_question_format(

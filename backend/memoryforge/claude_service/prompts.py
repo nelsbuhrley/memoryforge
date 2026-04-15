@@ -54,10 +54,27 @@ def build_quiz_prompt(
         prev_ctx = f"\n\nPrevious questions asked about this concept (DO NOT repeat these):\n{prev_list}"
 
     format_instructions = {
-        "free_response": "Ask an open-ended question requiring a written explanation. The student should demonstrate understanding, not just recall a definition.",
-        "multiple_choice": "Create a multiple-choice question with 4 options (A-D). Include one correct answer and three plausible distractors. Indicate the correct answer.",
-        "fill_in_blank": "Create a sentence with a key term or phrase blanked out. The blank should test understanding of the core concept.",
-        "apply_the_concept": "Present a novel scenario or problem that requires applying this concept. The student must use the concept to analyze or solve something new.",
+        "free_response": (
+            "Ask a hard analytical question that requires the student to identify the key conditions "
+            "that make this concept work, what breaks when those conditions are violated, and the "
+            "underlying mechanism — not a restatement of the definition. Target cause-effect and "
+            "structural reasoning."
+        ),
+        "multiple_choice": (
+            "Create a question that forces the student to distinguish this concept from superficially "
+            "similar alternatives. Include 4 options (A-D) with one correct answer and three plausible "
+            "near-miss distractors that differ in a meaningful, non-obvious way. Indicate the correct answer."
+        ),
+        "fill_in_blank": (
+            "Create a causal or conditional sentence where the blank requires inferring a consequence or "
+            "mechanism — not just recalling the name. The blank should complete a reasoning chain, not a "
+            "vocabulary slot."
+        ),
+        "apply_the_concept": (
+            "Present a realistic scenario where this concept applies, then ask the student to identify "
+            "both how the concept explains the situation AND one condition that would make it fail or "
+            "produce the wrong result. Require reasoning, not just an example."
+        ),
     }
 
     return f"""Generate a {question_format} question about the following concept.
