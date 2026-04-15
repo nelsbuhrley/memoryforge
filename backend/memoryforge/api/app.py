@@ -13,6 +13,7 @@ from .routes_sessions import router as sessions_router
 from .routes_dashboard import router as dashboard_router
 from .routes_plans import router as plans_router
 from .routes_history import router as history_router
+from .routes_admin import router as admin_router
 
 
 def create_app(config: Config | None = None) -> FastAPI:
@@ -42,5 +43,6 @@ def create_app(config: Config | None = None) -> FastAPI:
     app.include_router(dashboard_router)
     app.include_router(plans_router)
     app.include_router(history_router)
+    app.include_router(admin_router)
 
     return app

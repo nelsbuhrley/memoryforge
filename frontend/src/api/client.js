@@ -40,3 +40,6 @@ export const getPerformance = (subjectId) =>
 // Learning Plans
 export const getPlan = (subjectId) => request(`/plans/${subjectId}`, 'GET')
 export const createPlan = (data) => request('/plans', 'POST', data)
+
+// Admin
+export const runNightly = () => request('/admin/nightly', 'POST')
